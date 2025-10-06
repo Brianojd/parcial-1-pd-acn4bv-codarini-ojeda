@@ -1,0 +1,29 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f8ff;
+  padding: 2rem;
+}
+
+h1 {
+  color: #0078d7;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+input, button {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
