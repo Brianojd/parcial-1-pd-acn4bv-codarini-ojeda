@@ -6,16 +6,41 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>MedTrack</h1>
-  <form id="formMedicamento">
-    <input type="text" id="nombre" placeholder="Nombre del medicamento" required />
-    <input type="text" id="dosis" placeholder="Dosis (mg/ml)" required />
-    <input type="time" id="horario" required />
-    <button type="submit">Agregar</button>
-  </form>
+  <header>
+    <h1>MedTrack</h1>
+    <p>Tu asistente personal de medicación</p>
+  </header>
 
-  <h2>Mis Medicamentos</h2>
-  <ul id="listaMedicamentos"></ul>
+  <main>
+    <section class="formulario">
+      <h2>Agregar medicamento</h2>
+      <form id="formMedicamento">
+        <input type="text" id="nombre" placeholder="Nombre del medicamento" required />
+        <input type="text" id="dosis" placeholder="Dosis (mg/ml)" required />
+        <input type="time" id="horario" required />
+        <button type="submit">Agregar</button>
+      </form>
+    </section>
+
+    <section class="buscador">
+      <h2>Buscar medicamento</h2>
+      <input type="text" id="buscar" placeholder="Buscar por nombre..." />
+    </section>
+
+    <section class="lista">
+      <h2>Mis Medicamentos</h2>
+      <ul id="listaMedicamentos"></ul>
+    </section>
+
+    <section class="tips">
+      <h2>Consejos de Salud 🩺</h2>
+      <ul id="listaTips"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 MedTrack | Proyecto académico</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
