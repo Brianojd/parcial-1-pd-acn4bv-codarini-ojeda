@@ -19,25 +19,57 @@ let medicamentos = JSON.parse(localStorage.getItem('medicamentos'))?.map(
   m => new Medicamento(m.nombre, m.dosis, m.horario)
 ) || [];
 
+const crearItem = (m, i) => {
+  const li = document.createElement('li');
+
+  const span = document.createElement('span');
+  span.textContent = m.mostrarInfo();
+
+ 
+  const btnEditar = document.createElement('button');
+  btnEditar.textContent = '✏️';
+  btnEditar.title = 'Editar';
+  btnEditar.addEventListener('click', () => {
+    const nuevaDosis = prompt('Nueva dosis:', m.dosis);
+    if (nuevaDosis === null) return; // canceló
+    const nuevoHorario = prompt('Nuevo horario (HH:MM):', m.horario);
+    if (nuevoHorario === null) return;
+
+    const d = nuevaDosis.trim();
+    const h = nuevoHorario.trim();
+    if (!d || !h) return alert('Los campos no pueden quedar vacíos.');
+
+ 
+    if (!/^\d{2}:\d{2}$/.test(h)) return alert('Formato de hora inválido (usa HH:MM).');
+
+   
+    medicamentos[i].dosis = d;
+    medicamentos[i].horario = h;
+    guardarYMostrar();
+  });
+
+ 
+  const btnEliminar = document.createElement('button');
+  btnEliminar.textContent = '❌';
+  btnEliminar.classList.add('eliminar');
+  btnEliminar.title = 'Eliminar';
+  btnEliminar.addEventListener('click', () => confirmarEliminacion(i));
+
+  li.append(span, btnEditar, btnEliminar);
+  return li;
+};
+
 const mostrarMedicamentos = (arr = medicamentos) => {
   lista.innerHTML = '';
-  if (arr.length === 0) {
+  if (!arr.length) {
     lista.innerHTML = '<li>No hay medicamentos registrados.</li>';
     return;
   }
   arr.forEach((m, i) => {
-    const li = document.createElement('li');
-    li.textContent = m.mostrarInfo();
-
-    const btnEliminar = document.createElement('button');
-    btnEliminar.textContent = '❌';
-    btnEliminar.classList.add('eliminar');
-    btnEliminar.addEventListener('click', () => confirmarEliminacion(i));
-
-    li.appendChild(btnEliminar);
-    lista.appendChild(li);
+    lista.appendChild(crearItem(m, i));
   });
 };
+
 
 const confirmarEliminacion = (i) => {
   if (confirm('¿Seguro que querés eliminar este medicamento?')) {
@@ -59,6 +91,14 @@ form.addEventListener('submit', (e) => {
 
   if (!nombre || !dosis || !horario) {
     alert('Por favor completá todos los campos.');
+    return;
+  }
+
+  const existe = medicamentos.some(m =>
+    m.nombre.toLowerCase() === nombre.toLowerCase() && m.horario === horario
+  );
+  if (existe) {
+    alert('Ese medicamento ya existe para ese horario.');
     return;
   }
 
@@ -88,13 +128,14 @@ const cargarTips = async () => {
     });
   } catch {
     
-    ["Consejo general 1", "Consejo general 2"].forEach(t => {
+    ["comuniquese con su médico de confianza",].forEach(t => {
       const li = document.createElement('li');
       li.textContent = t;
       listaTips.appendChild(li);
     });
   }
 };
+
 
 mostrarMedicamentos();
 cargarTips();
