@@ -1,4 +1,3 @@
-// Clase con constructor y método
 class Medicamento {
   constructor(nombre, dosis, horario) {
     this.nombre = nombre;
@@ -11,48 +10,85 @@ class Medicamento {
   }
 }
 
-// Variables
 const form = document.getElementById('formMedicamento');
 const lista = document.getElementById('listaMedicamentos');
-let medicamentos = JSON.parse(localStorage.getItem('medicamentos')) || [];
+const inputBuscar = document.getElementById('buscar');
+const listaTips = document.getElementById('listaTips');
 
-// Función para mostrar los medicamentos en pantalla
-function mostrarMedicamentos() {
+let medicamentos = JSON.parse(localStorage.getItem('medicamentos'))?.map(
+  m => new Medicamento(m.nombre, m.dosis, m.horario)
+) || [];
+
+const mostrarMedicamentos = (arr = medicamentos) => {
   lista.innerHTML = '';
-  for (let i = 0; i < medicamentos.length; i++) {
+  if (arr.length === 0) {
+    lista.innerHTML = '<li>No hay medicamentos registrados.</li>';
+    return;
+  }
+  arr.forEach((m, i) => {
     const li = document.createElement('li');
-    li.textContent = medicamentos[i].mostrarInfo();
+    li.textContent = m.mostrarInfo();
+
     const btnEliminar = document.createElement('button');
     btnEliminar.textContent = '❌';
-    btnEliminar.onclick = () => eliminarMedicamento(i);
+    btnEliminar.classList.add('eliminar');
+    btnEliminar.addEventListener('click', () => confirmarEliminacion(i));
+
     li.appendChild(btnEliminar);
     lista.appendChild(li);
-  }
-}
+  });
+};
 
-// Agregar medicamento
+const confirmarEliminacion = (i) => {
+  if (confirm('¿Seguro que querés eliminar este medicamento?')) {
+    medicamentos.splice(i, 1);
+    guardarYMostrar();
+  }
+};
+
+const guardarYMostrar = () => {
+  localStorage.setItem('medicamentos', JSON.stringify(medicamentos));
+  mostrarMedicamentos();
+};
+
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const nombre = document.getElementById('nombre').value.trim();
   const dosis = document.getElementById('dosis').value.trim();
   const horario = document.getElementById('horario').value;
 
-  if (!nombre || !dosis || !horario) return alert('Completa todos los campos.');
+  if (!nombre || !dosis || !horario) {
+    alert('Por favor completá todos los campos.');
+    return;
+  }
 
   const nuevo = new Medicamento(nombre, dosis, horario);
   medicamentos.push(nuevo);
-  localStorage.setItem('medicamentos', JSON.stringify(medicamentos));
-
+  guardarYMostrar();
   form.reset();
-  mostrarMedicamentos();
 });
 
-// Eliminar medicamento
-function eliminarMedicamento(index) {
-  medicamentos.splice(index, 1);
-  localStorage.setItem('medicamentos', JSON.stringify(medicamentos));
-  mostrarMedicamentos();
-}
+inputBuscar.addEventListener('keyup', () => {
+  const filtro = inputBuscar.value.toLowerCase();
+  const resultado = medicamentos.filter(m =>
+    m.nombre.toLowerCase().includes(filtro)
+  );
+  mostrarMedicamentos(resultado);
+});
 
-// Mostrar al cargar
+const cargarTips = async () => {
+  try {
+    const respuesta = await fetch('mock_api.json');
+    const data = await respuesta.json();
+    data.tips.forEach(t => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      listaTips.appendChild(li);
+    });
+  } catch (error) {
+    console.error('Error cargando tips:', error);
+  }
+};
+
 mostrarMedicamentos();
+cargarTips();
