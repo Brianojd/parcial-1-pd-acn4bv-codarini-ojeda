@@ -78,15 +78,21 @@ inputBuscar.addEventListener('keyup', () => {
 
 const cargarTips = async () => {
   try {
-    const respuesta = await fetch('mock_api.json');
-    const data = await respuesta.json();
-    data.tips.forEach(t => {
+    const r = await fetch('mock_api.json');
+    if (!r.ok) throw new Error('sin-mock');
+    const data = await r.json();
+    (data.tips ?? []).forEach(t => {
       const li = document.createElement('li');
       li.textContent = t;
       listaTips.appendChild(li);
     });
-  } catch (error) {
-    console.error('Error cargando tips:', error);
+  } catch {
+    
+    ["Consejo general 1", "Consejo general 2"].forEach(t => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      listaTips.appendChild(li);
+    });
   }
 };
 
